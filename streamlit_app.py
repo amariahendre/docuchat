@@ -1,7 +1,4 @@
 # Import necessary libraries and modules
-import pysqlite3
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 import streamlit as st
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
@@ -54,11 +51,7 @@ def ask_and_get_answer(vector_store, q, k=3):
     retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={'k': k})
     chain = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
 
-    try:
-        answer = chain.run(q)
-    except openai.error.RateLimitError:
-        answer = "OpenAI free account doesn't work with this app. You need a paid version."
-
+    answer = chain.run(q)
     return answer
 
 # Define a function to calculate embedding cost using tiktoken
